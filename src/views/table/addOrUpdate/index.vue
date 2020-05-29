@@ -68,7 +68,7 @@
               this.dataForm.author = result.data.items.author
               this.dataForm.pageViews = result.data.items.pageViews
               this.dataForm.status = result.data.items.status
-              this.dataForm.createTime = result.data.items.createTime
+              this.dataForm.createTime = result.data.items.createTime.replace(/-/g, '/')
             }
           })
         } else {
