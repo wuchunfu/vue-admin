@@ -4,6 +4,7 @@ import app from './app'
 import settings from './settings'
 import user from './user'
 import table from './table'
+import lang from './lang'
 
 Vue.use(Vuex)
 
@@ -12,7 +13,8 @@ const store = new Vuex.Store({
     app,
     settings,
     user,
-    table
+    table,
+    lang
   }
 })
 

@@ -1,20 +1,17 @@
 import {getToken} from '@/utils/auth'
+import Cookies from 'js-cookie'
 
 export default {
+  SET_USER_ID: (state, userId) => {
+    state.userId = userId
+    Cookies.set('userId', userId)
+  },
   RESET_STATE: (state) => {
     Object.assign(state, {
-      token: getToken(),
-      name: '',
-      avatar: ''
+      token: getToken()
     })
   },
   SET_TOKEN: (state, token) => {
     state.token = token
-  },
-  SET_NAME: (state, name) => {
-    state.name = name
-  },
-  SET_AVATAR: (state, avatar) => {
-    state.avatar = avatar
   }
 }

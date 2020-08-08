@@ -1,7 +1,5 @@
 import axios from 'axios'
 import {Message} from 'element-ui'
-import userStore from '@/store/user'
-import {getToken} from '@/utils/auth'
 
 // create an axios instance
 const service = axios.create({
@@ -14,15 +12,15 @@ const service = axios.create({
 })
 
 // request interceptor
-service.interceptors.request.use(config => {
+service.interceptors.request.use(request => {
     // do something before request is sent
-    if (userStore.state.token) {
-      // let each request carry token
-      // ['X-Token'] is a custom headers key
-      // please modify it according to the actual situation
-      config.headers['X-Token'] = getToken()
-    }
-    return config
+    // if (userStore.state.token) {
+    // let each request carry token
+    // ['X-Token'] is a custom headers key
+    // please modify it according to the actual situation
+    // request.headers['X-Token'] = getToken()
+    // }
+    return request
   }, error => {
     // do something with request error
     console.log(error) // for debug
@@ -34,20 +32,18 @@ service.interceptors.request.use(config => {
 service.interceptors.response.use(response => {
     // console.log(response)
     const res = response.data
-    if (res.code !== 0) {
+    if (res !== '' && res !== undefined && res.code === 401) {
       Message({
         message: res.msg || 'Invalid token, 401',
         type: 'error',
         duration: 5 * 1000
       })
-      // store.dispatch('user/resetToken').then(() => {
-      //   location.reload()
-      // })
+    } else {
+      return response
     }
-    return response
   }, error => {
     Message({
-      message: error.msg,
+      message: error.msg || 'Refused to connect',
       type: 'error',
       duration: 5 * 1000
     })

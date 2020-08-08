@@ -30,12 +30,23 @@ module.exports = {
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
   devServer: {
+    host: 'localhost',
     port: port,
     open: true,
     overlay: {
       warnings: false,
       errors: true
     },
+    // proxy: {
+    //   '/proxyApi': {
+    //     target: 'http://localhost:1060',
+    //     ws: true,
+    //     changeOrigin: true,
+    //     pathRewrite: {
+    //       '^/proxyApi': '/'
+    //     }
+    //   }
+    // }
     before: require('./mock/mock-server.js')
   },
   configureWebpack: {
@@ -49,8 +60,20 @@ module.exports = {
     }
   },
   chainWebpack(config) {
-    config.plugins.delete('preload') // TODO: need test
-    config.plugins.delete('prefetch') // TODO: need test
+    // it can improve the speed of the first screen, it is recommended to turn on preload
+    // it can improve the speed of the first screen, it is recommended to turn on preload
+    config.plugin('preload').tap(() => [
+      {
+        rel: 'preload',
+        // to ignore runtime.js
+        // https://github.com/vuejs/vue-cli/blob/dev/packages/@vue/cli-service/lib/config/app.js#L171
+        fileBlacklist: [/\.map$/, /hot-update\.js$/, /runtime\..*\.js$/],
+        include: 'initial'
+      }
+    ])
+
+    // when there are many pages, it will cause too many meaningless requests
+    config.plugins.delete('prefetch')
 
     // set svg-sprite-loader
     config.module
@@ -68,7 +91,6 @@ module.exports = {
         symbolId: 'icon-[name]'
       })
       .end()
-
     // set preserveWhitespace
     config.module
       .rule('vue')
@@ -79,13 +101,11 @@ module.exports = {
         return options
       })
       .end()
-
     config
       // https://webpack.js.org/configuration/devtool/#development
       .when(process.env.NODE_ENV === 'development',
         config => config.devtool('cheap-source-map')
       )
-
     config
       .when(process.env.NODE_ENV !== 'development', config => {
           config

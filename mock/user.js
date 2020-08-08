@@ -4,15 +4,6 @@ const tokens = {
   }
 }
 
-const users = {
-  'admin-token': {
-    roles: ['admin'],
-    introduction: 'I am a super administrator',
-    avatar: '/avatar.jpg',
-    name: 'Super Admin'
-  }
-}
-
 export default [
   // user login
   {
@@ -32,27 +23,6 @@ export default [
         code: 0,
         data: token,
         msg: 'Account login succeeded.'
-      }
-    }
-  },
-  // get user info
-  {
-    url: '/vue-admin/user/info\.*',
-    type: 'get',
-    response: config => {
-      const {token} = config.query
-      const info = users[token]
-      if (!info) {
-        return {
-          code: 1,
-          data: null,
-          msg: 'Account login failed, unable to get user details.'
-        }
-      }
-      return {
-        code: 0,
-        data: info,
-        msg: 'Get user details succeeded.'
       }
     }
   },

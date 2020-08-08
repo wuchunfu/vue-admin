@@ -1,7 +1,5 @@
-import {getToken} from '@/utils/auth'
+import Cookies from 'js-cookie'
 
 export default {
-  token: getToken(),
-  name: '',
-  avatar: ''
+  userId: Cookies.get('userId')
 }

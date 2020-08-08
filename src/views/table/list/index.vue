@@ -110,14 +110,12 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-pagination
+        <pagination
           :total="totalPage"
-          layout="total, sizes, prev, pager, next, jumper"
-          :current-page="pageIndex"
+          :page.sync="pageIndex"
+          :limit.sync="pageSize"
           :page-sizes="[10, 20, 50, 100]"
-          :page-size="pageSize"
-          @current-change="currentChangeHandle"
-          @size-change="sizeChangeHandle"
+          @pagination="getDataList"
         />
         <!-- 弹窗, 新增 / 修改 -->
         <add-or-update
@@ -131,68 +129,60 @@
 </template>
 
 <script>
-  import {mapActions} from 'vuex'
-  import AddOrUpdate from '../addOrUpdate/index'
+import {mapActions} from 'vuex'
+import Pagination from '@/components/Pagination'
+import AddOrUpdate from '../addOrUpdate/index'
 
-  export default {
-    filters: {
-      statusFilter(status) {
-        const statusMap = {
-          published: 'success',
-          draft: 'gray',
-          deleted: 'danger'
-        }
-        return statusMap[status]
+export default {
+  filters: {
+    statusFilter(status) {
+      const statusMap = {
+        published: 'success',
+        draft: 'gray',
+        deleted: 'danger'
       }
-    },
-    components: {
-      AddOrUpdate
-    },
-    data() {
-      return {
-        loading: true,
-        dataForm: {
-          title: ''
-        },
-        dataListSelections: [],
-        dataList: [],
-        addOrUpdateVisible: false,
-        pageIndex: 1,
-        pageSize: 10,
-        totalPage: 0
+      return statusMap[status]
+    }
+  },
+  components: {
+    Pagination,
+    AddOrUpdate
+  },
+  data() {
+    return {
+      loading: true,
+      dataForm: {
+        title: ''
+      },
+      dataListSelections: [],
+      dataList: [],
+      addOrUpdateVisible: false,
+      pageIndex: 1,
+      pageSize: 10,
+      totalPage: 0
+    }
+  },
+  created() {
+    this.getDataList()
+  },
+  methods: {
+    ...mapActions('table', ['getList', 'getDeleteRow']),
+    getDataList() {
+      this.loading = true
+      const params = {
+        pageIndex: this.pageIndex,
+        pageSize: this.pageSize,
+        title: this.dataForm.title
       }
-    },
-    created() {
-      this.getDataList()
-    },
-    methods: {
-      ...mapActions('table', ['getList', 'getDeleteRow']),
-      getDataList() {
-        this.loading = true
-        const params = {
-          pageIndex: this.pageIndex,
-          pageSize: this.pageSize,
-          title: this.dataForm.title
-        }
-        this.getList(params).then((res) => {
-          // console.log(res.data)
-          const result = res.data
-          if (result && result.code === 0) {
-            this.dataList = result.data.items
-            this.totalPage = result.data.total
-          } else {
-            this.dataList = []
-            this.totalPage = 0
-            this.$notify({
-              title: '失败',
-              showClose: true,
-              message: '获取数据失败',
-              type: 'error',
-              duration: 3000
-            })
-          }
-          this.loading = false
-        }).catch((res) => {
+      this.getList(params).then((res) => {
+        // console.log(res.data)
+        const result = res.data
+        if (result && result.code === 0) {
+          this.dataList = result.data.items
+          this.totalPage = result.data.total
+        } else {
+          this.dataList = []
+          this.totalPage = 0
           this.$notify({
             title: '失败',
             showClose: true,
@@ -200,90 +190,84 @@
             type: 'error',
             duration: 3000
           })
-          this.loading = false
+        }
+        this.loading = false
+      }).catch((res) => {
+        this.$notify({
+          title: '失败',
+          showClose: true,
+          message: '获取数据失败',
+          type: 'error',
+          duration: 3000
         })
-      },
-      // 新增 / 修改
-      addOrUpdateHandle(row) {
-        this.addOrUpdateVisible = true
-        this.$nextTick(() => {
-          this.$refs.addOrUpdate.init(row)
+        this.loading = false
+      })
+    },
+    // 新增 / 修改
+    addOrUpdateHandle(row) {
+      this.addOrUpdateVisible = true
+      this.$nextTick(() => {
+        this.$refs.addOrUpdate.init(row)
+      })
+    },
+    //  删除
+    deleteHandle(id) {
+      const rowIds = id ? [id] : this.dataListSelections.map(item => {
+        return item.rowId
+      })
+      this.$confirm(`确定要进行 [${id ? '删除' : '批量删除'}] 操作?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.loading = true
+        this.getDeleteRow({rowIds: rowIds}).then((res) => {
+          // console.log(res.data)
+          const result = res.data
+          if (result && result.code === 0) {
+            this.$notify({
+              title: '成功',
+              showClose: true,
+              message: '删除成功',
+              type: 'success',
+              duration: 3000
+            })
+            this.getDataList()
+            this.loading = false
+          } else {
+            this.$notify({
+              title: '失败',
+              showClose: true,
+              message: '删除失败',
+              type: 'error',
+              duration: 3000
+            })
+            this.getDataList()
+            this.loading = false
+          }
         })
-      },
-      //  删除
-      deleteHandle(id) {
-        const rowIds = id ? [id] : this.dataListSelections.map(item => {
-          return item.rowId
-        })
-        this.$confirm(`确定要进行 [${id ? '删除' : '批量删除'}] 操作?`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.loading = true
-          this.getDeleteRow({rowIds: rowIds}).then((res) => {
-            // console.log(res.data)
-            const result = res.data
-            if (result && result.code === 0) {
-              this.$notify({
-                title: '成功',
-                showClose: true,
-                message: '删除成功',
-                type: 'success',
-                duration: 3000
-              })
-              this.getDataList()
-              this.loading = false
-            } else {
-              this.$notify({
-                title: '失败',
-                showClose: true,
-                message: '删除失败',
-                type: 'error',
-                duration: 3000
-              })
-              this.getDataList()
-              this.loading = false
-            }
-          })
-        })
-      },
-      // 多选
-      selectionChangeHandle(val) {
-        this.dataListSelections = val
-      },
-      // 当前页
-      currentChangeHandle(val) {
-        this.pageIndex = val
-        this.getDataList()
-      },
-      // 每页数
-      sizeChangeHandle(val) {
-        this.pageSize = val
-        this.pageIndex = 1
-        this.getDataList()
-      }
+      })
+    },
+    // 多选
+    selectionChangeHandle(val) {
+      this.dataListSelections = val
     }
   }
+}
 </script>
 
 <style lang="scss" scoped>
-  .row-box {
-    height: auto;
+.row-box {
+  height: auto;
 
-    .col-box {
-      width: 100%;
-      height: 100%;
-    }
-
-    .card-box {
-      width: 100%;
-      height: 100%;
-
-      .el-pagination {
-        margin-top: 15px;
-        text-align: right;
-      }
-    }
+  .col-box {
+    width: 100%;
+    height: 100%;
   }
+
+  .card-box {
+    width: 100%;
+    height: 100%;
+  }
+}
 </style>
