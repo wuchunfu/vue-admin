@@ -61,7 +61,6 @@ module.exports = {
   },
   chainWebpack(config) {
     // it can improve the speed of the first screen, it is recommended to turn on preload
-    // it can improve the speed of the first screen, it is recommended to turn on preload
     config.plugin('preload').tap(() => [
       {
         rel: 'preload',
@@ -91,23 +90,9 @@ module.exports = {
         symbolId: 'icon-[name]'
       })
       .end()
-    // set preserveWhitespace
-    config.module
-      .rule('vue')
-      .use('vue-loader')
-      .loader('vue-loader')
-      .tap(options => {
-        options.compilerOptions.preserveWhitespace = true
-        return options
-      })
-      .end()
     config
-      // https://webpack.js.org/configuration/devtool/#development
-      .when(process.env.NODE_ENV === 'development',
-        config => config.devtool('cheap-source-map')
-      )
-    config
-      .when(process.env.NODE_ENV !== 'development', config => {
+      .when(process.env.NODE_ENV !== 'development',
+        config => {
           config
             .plugin('ScriptExtHtmlWebpackPlugin')
             .after('html')
@@ -140,6 +125,7 @@ module.exports = {
               }
             }
           })
+          // https:// webpack.js.org/configuration/optimization/#optimizationruntimechunk
           config.optimization.runtimeChunk('single')
         }
       )

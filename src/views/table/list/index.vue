@@ -177,7 +177,7 @@ export default {
       this.getList(params).then((res) => {
         // console.log(res.data)
         const result = res.data
-        if (result && result.code === 0) {
+        if (result && result.code === 200) {
           this.dataList = result.data.items
           this.totalPage = result.data.total
         } else {
@@ -224,7 +224,7 @@ export default {
         this.getDeleteRow({rowIds: rowIds}).then((res) => {
           // console.log(res.data)
           const result = res.data
-          if (result && result.code === 0) {
+          if (result && result.code === 200) {
             this.$notify({
               title: '成功',
               showClose: true,

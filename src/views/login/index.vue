@@ -122,7 +122,7 @@ export default {
           this.loading = true
           this.login(this.loginForm).then((res) => {
             // console.log(res.data)
-            if (res.data !== undefined && res.data.code === 0) {
+            if (res.data !== undefined && res.data.code === 200) {
               this.$router.push({path: this.redirect || '/'})
             } else {
               this.$notify({

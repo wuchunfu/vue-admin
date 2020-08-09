@@ -1,4 +1,4 @@
-import Mock from 'mockjs'
+const Mock = require('mockjs')
 
 const listData = Mock.mock({
   'items|10': [{
@@ -24,7 +24,7 @@ const updateData = Mock.mock({
   }]
 })
 
-export default [
+module.exports = [
   {
     url: '/vue-admin/table/list',
     type: 'get',
@@ -33,7 +33,7 @@ export default [
       console.log(page, limit, title)
       const items = listData.items
       return {
-        code: 0,
+        code: 200,
         data: {
           total: items.length,
           items: items
@@ -48,7 +48,7 @@ export default [
     response: () => {
       const items = updateData.items
       return {
-        code: 0,
+        code: 200,
         data: {
           total: items.length,
           items: items
@@ -63,7 +63,7 @@ export default [
     response: config => {
       const items = config.body
       return {
-        code: 0,
+        code: 200,
         data: {
           total: items.length,
           items: items
@@ -78,7 +78,7 @@ export default [
     response: config => {
       const items = config.body
       return {
-        code: 0,
+        code: 200,
         data: {
           total: items.length,
           items: items
@@ -93,7 +93,7 @@ export default [
     response: config => {
       const items = config.body
       return {
-        code: 0,
+        code: 200,
         data: {
           total: items.length,
           items: items

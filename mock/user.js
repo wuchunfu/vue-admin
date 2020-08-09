@@ -4,7 +4,7 @@ const tokens = {
   }
 }
 
-export default [
+module.exports = [
   // user login
   {
     url: '/vue-admin/user/login',
@@ -14,13 +14,13 @@ export default [
       const token = tokens[username]
       if (!token) {
         return {
-          code: 1,
+          code: 401,
           data: null,
           msg: 'Wrong account or password.'
         }
       }
       return {
-        code: 0,
+        code: 200,
         data: token,
         msg: 'Account login succeeded.'
       }
@@ -32,7 +32,7 @@ export default [
     type: 'post',
     response: () => {
       return {
-        code: 0,
+        code: 200,
         data: null,
         msg: 'Account exit succeeded.'
       }

@@ -62,7 +62,7 @@ export default {
         this.getTableInfo({rowId: this.dataForm.rowId}).then((res) => {
           // console.log(res.data)
           const result = res.data
-          if (result && result.code === 0) {
+          if (result && result.code === 200) {
             this.dataForm.rowId = result.data.items.rowId
             this.dataForm.title = result.data.items.title
             this.dataForm.author = result.data.items.author
@@ -98,7 +98,7 @@ export default {
           this.getTableSaveOrUpdate(params).then((res) => {
             // console.log(res.data)
             const result = res.data
-            if (result && result.code === 0) {
+            if (result && result.code === 200) {
               this.$notify({
                 title: '成功',
                 showClose: true,

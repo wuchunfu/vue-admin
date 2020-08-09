@@ -1,6 +1,6 @@
 <template>
   <div>
-    <svg-icon :icon-class="isFullscreen?'exit-fullscreen':'fullscreen'" @click="click" />
+    <svg-icon :icon-class="isFullscreen?'exit-fullscreen':'fullscreen'" @click="click"/>
   </div>
 </template>
 
@@ -8,7 +8,7 @@
 import screenfull from 'screenfull'
 
 export default {
-  name: 'Screenfull',
+  name: 'ScreenFull',
   data() {
     return {
       isFullscreen: false
