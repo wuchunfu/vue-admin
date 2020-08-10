@@ -64,23 +64,23 @@ export const constantRoutes = [
     redirect: '/dashboard',
     children: [{
       path: 'dashboard',
-      name: '看板',
+      name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: {title: '看板', icon: 'dashboard'}
+      meta: {title: 'dashboard', icon: 'dashboard'}
     }]
   },
   {
     path: '/list',
     component: Layout,
-    redirect: '/list/table',
-    name: '列表',
-    meta: {title: '列表', icon: 'example'},
+    redirect: '/list/list',
+    name: 'Table',
+    meta: {title: 'table', icon: 'example'},
     children: [
       {
-        path: 'table',
-        name: '表格',
+        path: 'list',
+        name: 'List',
         component: () => import('@/views/table/list/index'),
-        meta: {title: '表格', icon: 'table'}
+        meta: {title: 'list', icon: 'table'}
       }
     ]
   },

@@ -4,17 +4,17 @@
       <el-card class="card-box">
         <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
           <el-form-item>
-            <el-input v-model="dataForm.title" placeholder="标题" clearable/>
+            <el-input v-model="dataForm.title" :placeholder="$t('table.title')" clearable/>
           </el-form-item>
           <el-form-item>
-            <el-button @click="getDataList()">查询</el-button>
-            <el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
+            <el-button @click="getDataList()">{{ $t('common.search') }}</el-button>
+            <el-button type="primary" @click="addOrUpdateHandle()">{{ $t('common.add') }}</el-button>
             <el-button
               type="danger"
               :disabled="dataListSelections.length <= 0"
               @click="deleteHandle()"
             >
-              批量删除
+              {{ $t('common.batchDelete') }}
             </el-button>
           </el-form-item>
         </el-form>
@@ -35,7 +35,7 @@
             width="50"
           />
           <el-table-column
-            label="标题"
+            :label="$t('table.title')"
             header-align="center"
             align="center"
           >
@@ -44,7 +44,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            label="作者"
+            :label="$t('table.author')"
             header-align="center"
             align="center"
             width="110"
@@ -54,7 +54,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            label="访问量"
+            :label="$t('table.pageView')"
             header-align="center"
             align="center"
             width="110"
@@ -64,7 +64,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            label="状态"
+            :label="$t('common.status')"
             class-name="status-col"
             header-align="center"
             align="center"
@@ -75,7 +75,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            label="创建时间"
+            :label="$t('common.createTime')"
             header-align="center"
             align="center"
             width="200"
@@ -85,10 +85,10 @@
             </template>
           </el-table-column>
           <el-table-column
-            label="操作"
+            :label="$t('common.operation')"
             header-align="center"
             align="center"
-            width="150"
+            width="155"
             fixed="right"
           >
             <template slot-scope="scope">
@@ -97,7 +97,7 @@
                 size="small"
                 @click="addOrUpdateHandle(scope.row)"
               >
-                修改
+                {{ $t('common.edit') }}
               </el-button>
               <el-button
                 v-loading="loading"
@@ -105,7 +105,7 @@
                 size="small"
                 @click="deleteHandle(scope.row.rowId)"
               >
-                删除
+                {{ $t('common.delete') }}
               </el-button>
             </template>
           </el-table-column>
@@ -132,6 +132,7 @@
 import {mapActions} from 'vuex'
 import Pagination from '@/components/Pagination'
 import AddOrUpdate from '../addOrUpdate/index'
+import i18n from '@/i18n'
 
 export default {
   filters: {
@@ -184,9 +185,9 @@ export default {
           this.dataList = []
           this.totalPage = 0
           this.$notify({
-            title: '失败',
+            title: i18n.t('common.fail'),
             showClose: true,
-            message: '获取数据失败',
+            message: i18n.t('common.Failed to get data'),
             type: 'error',
             duration: 3000
           })
@@ -194,9 +195,9 @@ export default {
         this.loading = false
       }).catch((res) => {
         this.$notify({
-          title: '失败',
+          title: i18n.t('common.fail'),
           showClose: true,
-          message: '获取数据失败',
+          message: i18n.t('common.Failed to get data'),
           type: 'error',
           duration: 3000
         })
@@ -215,20 +216,22 @@ export default {
       const rowIds = id ? [id] : this.dataListSelections.map(item => {
         return item.rowId
       })
-      this.$confirm(`确定要进行 [${id ? '删除' : '批量删除'}] 操作?`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
+      this.$confirm(
+        i18n.t('common.Are you sure you want to delete'),
+        i18n.t('common.tips'), {
+          confirmButtonText: i18n.t('common.confirm'),
+          cancelButtonText: i18n.t('common.cancel'),
+          type: 'warning'
+        }).then(() => {
         this.loading = true
         this.getDeleteRow({rowIds: rowIds}).then((res) => {
           // console.log(res.data)
           const result = res.data
           if (result && result.code === 200) {
             this.$notify({
-              title: '成功',
+              title: i18n.t('common.success'),
               showClose: true,
-              message: '删除成功',
+              message: i18n.t('common.Delete successfully'),
               type: 'success',
               duration: 3000
             })
@@ -236,9 +239,9 @@ export default {
             this.loading = false
           } else {
             this.$notify({
-              title: '失败',
+              title: i18n.t('common.fail'),
               showClose: true,
-              message: '删除失败',
+              message: i18n.t('common.Delete failed'),
               type: 'error',
               duration: 3000
             })

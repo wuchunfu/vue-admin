@@ -9,7 +9,7 @@
       label-position="left"
     >
       <div class="title-container">
-        <h3 class="title">登陆</h3>
+        <h3 class="title">{{ $t('login.title') }}</h3>
       </div>
       <el-form-item prop="username">
         <span class="svg-container">
@@ -18,7 +18,7 @@
         <el-input
           ref="username"
           v-model="loginForm.username"
-          placeholder="Username"
+          :placeholder="$t('login.username')"
           name="username"
           type="text"
           tabindex="1"
@@ -35,7 +35,7 @@
           ref="password"
           v-model="loginForm.password"
           :type="passwordType"
-          placeholder="Password"
+          :placeholder="$t('login.password')"
           name="password"
           tabindex="2"
           auto-complete="on"
@@ -51,11 +51,11 @@
         style="width:100%;margin-bottom:30px;"
         @click.native.prevent="handleLogin"
       >
-        登陆
+        {{ $t('login.login') }}
       </el-button>
       <div class="tips">
-        <span style="margin-right:20px;">用户名: admin</span>
-        <span> 密码: 123456</span>
+        <span style="margin-right:20px;">{{ $t('login.username') }}: admin</span>
+        <span> {{ $t('login.password') }}: 123456</span>
       </div>
     </el-form>
   </div>
@@ -64,20 +64,21 @@
 <script>
 import {mapActions} from 'vuex'
 import {validUsername} from '@/utils/validate'
+import i18n from '@/i18n'
 
 export default {
   name: 'Login',
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
-        callback(new Error('请输入用户名'))
+        callback(new Error(i18n.t('Please enter one user name')))
       } else {
         callback()
       }
     }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('密码不能少于6位数'))
+        callback(new Error(i18n.t('The password cannot be less than 6 digits')))
       } else {
         callback()
       }
@@ -126,9 +127,9 @@ export default {
               this.$router.push({path: this.redirect || '/'})
             } else {
               this.$notify({
-                title: '失败',
+                title: i18n.t('common.fail'),
                 showClose: true,
-                message: '登陆失败',
+                message: i18n.t('login.loginFail'),
                 type: 'error',
                 duration: 3000
               })
@@ -136,9 +137,9 @@ export default {
             }
           }).catch(() => {
             this.$notify({
-              title: '失败',
+              title: i18n.t('common.fail'),
               showClose: true,
-              message: '登陆失败',
+              message: i18n.t('login.loginFail'),
               type: 'error',
               duration: 3000
             })

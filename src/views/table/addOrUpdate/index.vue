@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="!dataForm.rowId ? '新增' : '修改'"
+    :title="!dataForm.rowId ? $t('common.add') : $t('common.edit')"
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form
@@ -10,27 +10,38 @@
       label-width="80px"
       @keyup.enter.native="dataFormSubmit()"
     >
-      <el-form-item label="标题" prop="title">
-        <el-input v-model="dataForm.title" type="text" style="width: 90%;" placeholder="标题"/>
+      <el-form-item :label="$t('table.title')" prop="title">
+        <el-input v-model="dataForm.title" type="text" style="width: 90%;" :placeholder="$t('table.title')"/>
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="dataForm.status" class="filter-item" style="width: 90%;" placeholder="请选择">
+      <el-form-item :label="$t('common.status')" prop="status">
+        <el-select
+          v-model="dataForm.status"
+          class="filter-item"
+          style="width: 90%;"
+          :placeholder="$t('common.Please select')"
+        >
           <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item"/>
         </el-select>
       </el-form-item>
-      <el-form-item label="日期" prop="createTime">
-        <el-date-picker v-model="dataForm.createTime" type="datetime" style="width: 90%;" placeholder="请选择日期"/>
+      <el-form-item :label="$t('common.date')" prop="createTime">
+        <el-date-picker
+          v-model="dataForm.createTime"
+          type="datetime"
+          style="width: 90%;"
+          :placeholder="$t('common.Please select')"
+        />
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">保存</el-button>
+      <el-button @click="visible = false">{{ $t('common.cancel') }}</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">{{ $t('common.save') }}</el-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
 import {mapActions} from 'vuex'
+import i18n from '@/i18n'
 
 export default {
   data() {
@@ -47,7 +58,7 @@ export default {
       statusOptions: ['published', 'draft', 'deleted'],
       dataRule: {
         title: [
-          {required: true, message: '标题不能为空', trigger: 'blur'}
+          {required: true, message: i18n.t('table.Title cannot be empty'), trigger: 'blur'}
         ]
       }
     }
@@ -100,9 +111,9 @@ export default {
             const result = res.data
             if (result && result.code === 200) {
               this.$notify({
-                title: '成功',
+                title: i18n.t('common.success'),
                 showClose: true,
-                message: '操作成功',
+                message: i18n.t('common.Operation succeeded'),
                 type: 'success',
                 duration: 3000
               })
@@ -118,9 +129,9 @@ export default {
               this.$emit('refreshDataList')
             } else {
               this.$notify({
-                title: '失败',
+                title: i18n.t('common.fail'),
                 showClose: true,
-                message: '操作失败',
+                message: i18n.t('common.Operation failed'),
                 type: 'error',
                 duration: 3000
               })
